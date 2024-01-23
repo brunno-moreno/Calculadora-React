@@ -21,30 +21,37 @@ export default class Calculator extends Component {
         this.addDigit = this.addDigit.bind(this);
     }
 
+    // Função para reiniciar o estado inicial da calculadora
     clearMemory() {
         this.setState({ ...initialState});
     }
 
+    // Definição da operação atual e atualização do estado
     setOperation(operation) {
         if(this.state.current === 0) {
+            // Define a operação, atualiza o estado e limpa o visor
             this.setState({ operation, current: 1, clearDisplay: true })
         } else {
             const equals = operation === '=';
             const currentOperation = this.state.operation;
-
             const values = [...this.state.values];
+
             try{
-            values[0] = eval(`${values[0]} ${currentOperation} ${values[1]}`);
-            if(isNaN(values[0]) || !isFinite(values[0])) {
-                this.clearMemory();
-                return;
-            }
+                // Avalia a expressão com os valores existentes
+                values[0] = eval(`${values[0]} ${currentOperation} ${values[1]}`);
+            
+                // Verifica se o resultado é um número válido e finito
+                if(isNaN(values[0]) || !isFinite(values[0])) {
+                    this.clearMemory();
+                    return;
+                }
             } catch(e) {
                 values[0] = this.state.values[0];
             }
             
             values[1] = 0;
 
+            // Atualiza o estado da calculadora com os novos valores
             this.setState({
                 displayValue: values[0],
                 operation: equals ? null : operation,
@@ -55,6 +62,7 @@ export default class Calculator extends Component {
         }
     }
 
+    // Função para adicionar um dígito ou ponto ao visor da calculadora
     addDigit(n) {
         if(n === '.' && this.state.displayValue.includes('.')) {
             return;
